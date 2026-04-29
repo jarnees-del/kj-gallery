@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KJ Creations – Client Gallery</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep:   #514343;
+    --cream:  #faf6f5;
+    --sage:   #b9c7bc;
+    --deep2:  #3a2e2e;
+    --sage-light: #d6e0d8;
+    --sage-dark:  #8aa090;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    color: var(--deep);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  /* ─── NOISE TEXTURE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    position: relative; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 48px;
+    border-bottom: 1px solid rgba(81,67,67,0.12);
+    background: rgba(250,246,245,0.9);
+    backdrop-filter: blur(8px);
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.7rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    color: var(--deep);
+  }
+  .logo span { color: var(--sage-dark); font-style: italic; }
+
+  .header-tagline {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--sage-dark);
+  }
+
+  /* ─── MAIN WRAPPER ─── */
+  main { position: relative; z-index: 1; padding: 0 48px 80px; }
+
+  /* ─── LOGIN SCREEN ─── */
+  #login-screen {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: calc(100vh - 90px);
+    gap: 0;
+  }
+
+  .login-card {
+    background: white;
+    border: 1px solid rgba(81,67,67,0.1);
+    border-radius: 2px;
+    padding: 56px 52px 48px;
+    width: 100%; max-width: 420px;
+    box-shadow: 0 8px 40px rgba(81,67,67,0.08);
+    text-align: center;
+  }
+
+  .login-card .lock-icon {
+    width: 48px; height: 48px; margin: 0 auto 28px;
+    border: 1.5px solid var(--sage);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--sage-dark);
+    font-size: 1.1rem;
+  }
+
+  .login-card h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem; font-weight: 300;
+    color: var(--deep); margin-bottom: 6px;
+  }
+  .login-card p {
+    font-size: 0.78rem; color: var(--sage-dark);
+    letter-spacing: 0.08em; margin-bottom: 36px;
+  }
+
+  .client-select-wrap {
+    position: relative; margin-bottom: 16px;
+  }
+  .client-select-wrap label {
+    display: block; text-align: left;
+    font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--sage-dark); margin-bottom: 8px;
+  }
+  select, input[type="password"] {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1px solid rgba(81,67,67,0.2);
+    border-radius: 1px;
+    background: var(--cream);
+    color: var(--deep);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.88rem; font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+  select:focus, input[type="password"]:focus {
+    border-color: var(--sage-dark);
+  }
+  .select-arrow {
+    position: absolute; right: 14px; bottom: 15px;
+    pointer-events: none; color: var(--sage-dark); font-size: 0.65rem;
+  }
+
+  .pw-wrap { position: relative; margin-bottom: 28px; }
+  .pw-wrap label {
+    display: block; text-align: left;
+    font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--sage-dark); margin-bottom: 8px;
+  }
+  .pw-toggle {
+    position: absolute; right: 14px; top: 38px;
+    background: none; border: none; cursor: pointer;
+    color: var(--sage-dark); font-size: 0.75rem; letter-spacing: 0.05em;
+    font-family: 'Jost', sans-serif;
+  }
+
+  .login-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--deep);
+    color: var(--cream);
+    border: none; border-radius: 1px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem; font-weight: 400;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.15s;
+  }
+  .login-btn:hover { background: var(--deep2); transform: translateY(-1px); }
+  .login-btn:active { transform: translateY(0); }
+
+  .error-msg {
+    margin-top: 14px;
+    font-size: 0.75rem; color: #b05050;
+    letter-spacing: 0.05em; display: none;
+  }
+  .error-msg.show { display: block; }
+
+  /* ─── GALLERY SCREEN ─── */
+  #gallery-screen { display: none; }
+
+  .gallery-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 52px 0 32px;
+    border-bottom: 1px solid rgba(81,67,67,0.1);
+    margin-bottom: 48px;
+  }
+
+  .gallery-title-block h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem; font-weight: 300;
+    color: var(--deep); line-height: 1;
+  }
+  .gallery-title-block h1 em {
+    font-style: italic; color: var(--sage-dark);
+  }
+  .gallery-title-block .occasion-tag {
+    display: inline-block; margin-top: 10px;
+    background: var(--sage-light);
+    color: var(--deep2);
+    font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 20px;
+  }
+
+  .gallery-meta {
+    text-align: right; font-size: 0.75rem;
+    color: var(--sage-dark); letter-spacing: 0.05em;
+    line-height: 1.8;
+  }
+
+  .logout-btn {
+    display: inline-block; margin-top: 10px;
+    background: none; border: 1px solid rgba(81,67,67,0.2);
+    border-radius: 1px; padding: 7px 18px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--deep); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .logout-btn:hover { background: var(--deep); color: var(--cream); }
+
+  /* ─── PHOTO GRID ─── */
+  .photo-grid {
+    columns: 3; column-gap: 16px;
+  }
+  @media (max-width: 900px) { .photo-grid { columns: 2; } }
+  @media (max-width: 560px) { .photo-grid { columns: 1; } }
+
+  .photo-item {
+    break-inside: avoid; margin-bottom: 16px;
+    position: relative; overflow: hidden;
+    border-radius: 1px;
+    cursor: pointer;
+    background: var(--sage-light);
+  }
+
+  .photo-item img {
+    width: 100%; display: block;
+    transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94), filter 0.4s;
+    filter: brightness(0.97);
+  }
+  .photo-item:hover img {
+    transform: scale(1.04);
+    filter: brightness(1.02);
+  }
+
+  .photo-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(81,67,67,0.55) 0%, transparent 55%);
+    opacity: 0; transition: opacity 0.35s;
+    display: flex; align-items: flex-end; padding: 18px;
+  }
+  .photo-item:hover .photo-overlay { opacity: 1; }
+
+  .photo-overlay span {
+    color: white; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  /* placeholder tiles */
+  .photo-placeholder {
+    width: 100%; aspect-ratio: 1;
+    background: linear-gradient(135deg, var(--sage-light) 0%, var(--cream) 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--sage-dark); font-size: 0.7rem; letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* ─── LIGHTBOX ─── */
+  #lightbox {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    background: rgba(58,46,46,0.92);
+    backdrop-filter: blur(6px);
+    align-items: center; justify-content: center;
+    animation: fadeIn 0.25s ease;
+  }
+  #lightbox.open { display: flex; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .lightbox-inner {
+    position: relative; max-width: 90vw; max-height: 88vh;
+    display: flex; flex-direction: column; align-items: center;
+  }
+
+  .lightbox-inner img {
+    max-width: 100%; max-height: 80vh;
+    border-radius: 1px;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.4);
+    animation: scaleIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes scaleIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .lightbox-caption {
+    color: rgba(250,246,245,0.7);
+    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+    margin-top: 16px;
+  }
+
+  .lb-close {
+    position: fixed; top: 28px; right: 36px;
+    background: none; border: 1px solid rgba(250,246,245,0.3);
+    border-radius: 50%; width: 42px; height: 42px;
+    color: var(--cream); font-size: 1.2rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .lb-close:hover { background: rgba(250,246,245,0.15); }
+
+  .lb-nav {
+    position: fixed; top: 50%; transform: translateY(-50%);
+    background: none; border: 1px solid rgba(250,246,245,0.25);
+    border-radius: 1px;
+    color: var(--cream); font-size: 1rem;
+    width: 44px; height: 44px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .lb-nav:hover { background: rgba(250,246,245,0.12); }
+  .lb-prev { left: 24px; }
+  .lb-next { right: 24px; }
+
+  /* ─── INSTRUCTIONS PANEL ─── */
+  .instructions {
+    margin-top: 60px;
+    border-top: 1px solid rgba(81,67,67,0.1);
+    padding-top: 40px;
+  }
+  .instructions h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-weight: 300;
+    margin-bottom: 20px; color: var(--deep);
+  }
+  .instructions-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+  }
+  .instr-card {
+    background: white; border: 1px solid rgba(81,67,67,0.08);
+    padding: 24px; border-radius: 1px;
+  }
+  .instr-card .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; color: var(--sage);
+    line-height: 1; margin-bottom: 10px;
+  }
+  .instr-card h4 {
+    font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--deep); margin-bottom: 8px;
+  }
+  .instr-card p { font-size: 0.82rem; color: #7a6a6a; line-height: 1.7; }
+  code {
+    background: var(--sage-light); padding: 1px 6px; border-radius: 2px;
+    font-size: 0.78rem; color: var(--deep2);
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 32px;
+    border-top: 1px solid rgba(81,67,67,0.08);
+    font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--sage-dark);
+  }
+
+  /* ─── ADMIN PANEL ─── */
+  .admin-toggle {
+    background: none; border: none; cursor: pointer;
+    font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--sage-dark); font-family: 'Jost', sans-serif;
+    padding: 4px 0; margin-top: 20px; text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  #admin-panel {
+    display: none; margin-top: 48px;
+    background: white; border: 1px solid rgba(185,199,188,0.4);
+    border-radius: 2px; padding: 36px;
+  }
+  #admin-panel h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 300; margin-bottom: 24px;
+    color: var(--deep);
+  }
+
+  .client-list { list-style: none; }
+  .client-list li {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0; border-bottom: 1px solid rgba(81,67,67,0.07);
+    font-size: 0.85rem;
+  }
+  .client-list li:last-child { border-bottom: none; }
+  .client-info strong { display: block; font-weight: 400; color: var(--deep); }
+  .client-info span { font-size: 0.72rem; color: var(--sage-dark); letter-spacing: 0.05em; }
+
+  .add-client-form {
+    margin-top: 28px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 12px; align-items: end;
+  }
+  .add-client-form label {
+    display: block; font-size: 0.68rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--sage-dark); margin-bottom: 7px;
+  }
+  .add-client-form input, .add-client-form select {
+    width: 100%; padding: 11px 14px;
+    border: 1px solid rgba(81,67,67,0.2); border-radius: 1px;
+    background: var(--cream); color: var(--deep);
+    font-family: 'Jost', sans-serif; font-size: 0.82rem; outline: none;
+  }
+  .add-btn {
+    padding: 11px 22px;
+    background: var(--sage); color: var(--deep2);
+    border: none; border-radius: 1px; cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .add-btn:hover { background: var(--sage-dark); color: white; }
+
+  .del-btn {
+    background: none; border: 1px solid rgba(81,67,67,0.15);
+    padding: 5px 12px; border-radius: 1px; cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: #9a7070; transition: all 0.2s;
+  }
+  .del-btn:hover { background: #f5eaea; border-color: #c08080; color: #a05050; }
+
+  @media (max-width: 700px) {
+    header { padding: 20px 24px; }
+    main { padding: 0 24px 60px; }
+    .add-client-form { grid-template-columns: 1fr 1fr; }
+    .add-client-form .add-btn-wrap { grid-column: span 2; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">KJ <span>Creations</span></div>
+  <div class="header-tagline">Private Client Gallery</div>
+</header>
+
+<main>
+
+  <!-- ── LOGIN ── -->
+  <div id="login-screen">
+    <div class="login-card">
+      <div class="lock-icon">&#x1F512;</div>
+      <h2>Your Gallery Awaits</h2>
+      <p>Select your name and enter your private access code</p>
+
+      <div class="client-select-wrap">
+        <label for="client-select">Your Name</label>
+        <select id="client-select"></select>
+        <span class="select-arrow">&#9660;</span>
+      </div>
+
+      <div class="pw-wrap">
+        <label for="pw-input">Access Code</label>
+        <input type="password" id="pw-input" placeholder="Enter your code" />
+        <button class="pw-toggle" onclick="togglePw()" type="button">show</button>
+      </div>
+
+      <button class="login-btn" onclick="attemptLogin()">View My Gallery</button>
+      <div class="error-msg" id="error-msg">Incorrect access code. Please try again.</div>
+
+      <button class="admin-toggle" onclick="toggleAdmin()">Studio Admin ›</button>
+    </div>
+  </div>
+
+  <!-- ── GALLERY ── -->
+  <div id="gallery-screen">
+    <div class="gallery-header">
+      <div class="gallery-title-block">
+        <h1>Welcome, <em id="gallery-client-name"></em></h1>
+        <span class="occasion-tag" id="gallery-occasion"></span>
+      </div>
+      <div class="gallery-meta">
+        <div id="gallery-photo-count"></div>
+        <div>KJ Creations Studio</div>
+        <button class="logout-btn" onclick="logout()">← Back</button>
+      </div>
+    </div>
+
+    <div class="photo-grid" id="photo-grid"></div>
+
+    <div class="instructions">
+      <h3>How to use your gallery</h3>
+      <div class="instructions-grid">
+        <div class="instr-card">
+          <div class="step-num">01</div>
+          <h4>Browse</h4>
+          <p>Scroll through your photos. Click any image to open the full-size lightbox viewer.</p>
+        </div>
+        <div class="instr-card">
+          <div class="step-num">02</div>
+          <h4>Navigate</h4>
+          <p>Use the arrow buttons in the lightbox or your keyboard ← → keys to move between photos.</p>
+        </div>
+        <div class="instr-card">
+          <div class="step-num">03</div>
+          <h4>Download</h4>
+          <p>Right-click any photo in the lightbox and select <em>Save image as</em> to download it.</p>
+        </div>
+        <div class="instr-card">
+          <div class="step-num">04</div>
+          <h4>Share</h4>
+          <p>Keep your access code private. Share only with people you'd like to see your gallery.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ADMIN PANEL ── -->
+  <div id="admin-panel">
+    <h3>Studio Admin — Manage Clients</h3>
+    <p style="font-size:0.78rem;color:var(--sage-dark);margin-bottom:24px;">
+      Add clients, set their passwords and occasion type. Demo photos are shown automatically — replace image URLs in the <code>clients</code> data with your own.
+    </p>
+
+    <ul class="client-list" id="client-list"></ul>
+
+    <div class="add-client-form">
+      <div>
+        <label>Client Name</label>
+        <input type="text" id="new-name" placeholder="e.g. Sarah M." />
+      </div>
+      <div>
+        <label>Access Code</label>
+        <input type="text" id="new-pw" placeholder="e.g. roses2024" />
+      </div>
+      <div>
+        <label>Occasion</label>
+        <select id="new-occasion">
+          <option>Wedding</option>
+          <option>Portrait Session</option>
+          <option>Maternity</option>
+          <option>Newborn</option>
+          <option>Family</option>
+          <option>Birthday</option>
+          <option>Graduation</option>
+          <option>Engagement</option>
+          <option>Branding</option>
+          <option>Event</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="add-btn-wrap">
+        <button class="add-btn" onclick="addClient()">+ Add Client</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── LIGHTBOX ── -->
+<div id="lightbox">
+  <button class="lb-close" onclick="closeLightbox()">&#x2715;</button>
+  <button class="lb-nav lb-prev" onclick="lbNav(-1)">&#8592;</button>
+  <div class="lightbox-inner">
+    <img id="lb-img" src="" alt="" />
+    <div class="lightbox-caption" id="lb-caption"></div>
+  </div>
+  <button class="lb-nav lb-next" onclick="lbNav(1)">&#8594;</button>
+</div>
+
+<footer>KJ Creations &nbsp;·&nbsp; Private Client Gallery &nbsp;·&nbsp; All images are protected</footer>
+
+<script>
+// ─────────────────────────────────────────────
+// CLIENT DATA  –  Edit this section to add real clients & photo URLs
+// Each client: { name, password, occasion, photos: [ {url, caption} ] }
+// ─────────────────────────────────────────────
+let clients = [
+  {
+    name: "Sarah M.",
+    password: "roses2024",
+    occasion: "Wedding",
+    photos: generatePlaceholders("Sarah M.", 9)
+  },
+  {
+    name: "The Johnson Family",
+    password: "family123",
+    occasion: "Family",
+    photos: generatePlaceholders("The Johnson Family", 6)
+  },
+  {
+    name: "Brianna L.",
+    password: "grad2024",
+    occasion: "Graduation",
+    photos: generatePlaceholders("Brianna L.", 8)
+  }
+];
+
+// ─────────────────────────────────────────────
+// Generates placeholder tiles (replace with real photo objects)
+// Real photo format: { url: "https://...", caption: "Photo 1" }
+// ─────────────────────────────────────────────
+function generatePlaceholders(name, count) {
+  return Array.from({ length: count }, (_, i) => ({
+    url: null,
+    caption: `${name} — Photo ${i + 1}`
+  }));
+}
+
+// ─────────────────────────────────────────────
+// POPULATE CLIENT DROPDOWN
+// ─────────────────────────────────────────────
+function populateSelect() {
+  const sel = document.getElementById('client-select');
+  sel.innerHTML = '<option value="">— Select your name —</option>';
+  clients.forEach((c, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = c.name;
+    sel.appendChild(opt);
+  });
+}
+
+// ─────────────────────────────────────────────
+// LOGIN
+// ─────────────────────────────────────────────
+function attemptLogin() {
+  const idx = parseInt(document.getElementById('client-select').value);
+  const pw  = document.getElementById('pw-input').value.trim();
+  const err = document.getElementById('error-msg');
+
+  if (isNaN(idx)) { showError('Please select your name.'); return; }
+  if (clients[idx].password === pw) {
+    err.classList.remove('show');
+    showGallery(idx);
+  } else {
+    showError('Incorrect access code. Please try again.');
+    document.getElementById('pw-input').value = '';
+  }
+}
+
+function showError(msg) {
+  const err = document.getElementById('error-msg');
+  err.textContent = msg;
+  err.classList.add('show');
+}
+
+function togglePw() {
+  const inp = document.getElementById('pw-input');
+  const btn = document.querySelector('.pw-toggle');
+  if (inp.type === 'password') { inp.type = 'text';     btn.textContent = 'hide'; }
+  else                          { inp.type = 'password'; btn.textContent = 'show'; }
+}
+
+// ─────────────────────────────────────────────
+// GALLERY
+// ─────────────────────────────────────────────
+let currentClient = null;
+let lbIndex = 0;
+
+function showGallery(idx) {
+  currentClient = clients[idx];
+  document.getElementById('login-screen').style.display  = 'none';
+  document.getElementById('gallery-screen').style.display = 'block';
+  document.getElementById('gallery-client-name').textContent = currentClient.name;
+  document.getElementById('gallery-occasion').textContent    = currentClient.occasion;
+  document.getElementById('gallery-photo-count').textContent =
+    currentClient.photos.length + ' Photos';
+
+  renderGrid();
+}
+
+function renderGrid() {
+  const grid = document.getElementById('photo-grid');
+  grid.innerHTML = '';
+  currentClient.photos.forEach((photo, i) => {
+    const item = document.createElement('div');
+    item.className = 'photo-item';
+    item.onclick = () => openLightbox(i);
+
+    if (photo.url) {
+      item.innerHTML = `
+        <img src="${photo.url}" alt="${photo.caption}" loading="lazy" />
+        <div class="photo-overlay"><span>View</span></div>`;
+    } else {
+      item.innerHTML = `
+        <div class="photo-placeholder">Photo ${i + 1}</div>
+        <div class="photo-overlay"><span>View</span></div>`;
+    }
+    grid.appendChild(item);
+  });
+}
+
+function logout() {
+  currentClient = null;
+  document.getElementById('gallery-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display   = 'flex';
+  document.getElementById('pw-input').value = '';
+  document.getElementById('error-msg').classList.remove('show');
+}
+
+// ─────────────────────────────────────────────
+// LIGHTBOX
+// ─────────────────────────────────────────────
+function openLightbox(i) {
+  lbIndex = i;
+  updateLightbox();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function updateLightbox() {
+  const photo = currentClient.photos[lbIndex];
+  const img = document.getElementById('lb-img');
+  const cap = document.getElementById('lb-caption');
+
+  if (photo.url) {
+    img.src = photo.url;
+    img.style.display = 'block';
+  } else {
+    img.src = '';
+    img.style.display = 'none';
+  }
+  cap.textContent = photo.caption +
+    ' (' + (lbIndex + 1) + ' / ' + currentClient.photos.length + ')';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function lbNav(dir) {
+  lbIndex = (lbIndex + dir + currentClient.photos.length) % currentClient.photos.length;
+  updateLightbox();
+}
+
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'ArrowLeft')  lbNav(-1);
+  if (e.key === 'ArrowRight') lbNav(1);
+  if (e.key === 'Escape')     closeLightbox();
+});
+
+// Enter key on login
+document.getElementById('pw-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') attemptLogin();
+});
+
+// ─────────────────────────────────────────────
+// ADMIN PANEL
+// ─────────────────────────────────────────────
+function toggleAdmin() {
+  const panel = document.getElementById('admin-panel');
+  panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+  renderAdminList();
+  if (panel.style.display === 'block')
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderAdminList() {
+  const list = document.getElementById('client-list');
+  list.innerHTML = '';
+  clients.forEach((c, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div class="client-info">
+        <strong>${c.name}</strong>
+        <span>${c.occasion} &nbsp;·&nbsp; ${c.photos.length} photos &nbsp;·&nbsp; Code: <code>${c.password}</code></span>
+      </div>
+      <button class="del-btn" onclick="deleteClient(${i})">Remove</button>`;
+    list.appendChild(li);
+  });
+  if (clients.length === 0) {
+    list.innerHTML = '<li style="color:var(--sage-dark);font-size:0.82rem;padding:14px 0;">No clients yet — add one below.</li>';
+  }
+}
+
+function addClient() {
+  const name     = document.getElementById('new-name').value.trim();
+  const pw       = document.getElementById('new-pw').value.trim();
+  const occasion = document.getElementById('new-occasion').value;
+  if (!name || !pw) { alert('Please enter a name and access code.'); return; }
+
+  clients.push({ name, password: pw, occasion, photos: generatePlaceholders(name, 0) });
+  document.getElementById('new-name').value = '';
+  document.getElementById('new-pw').value   = '';
+  populateSelect();
+  renderAdminList();
+}
+
+function deleteClient(i) {
+  if (!confirm(`Remove ${clients[i].name}?`)) return;
+  clients.splice(i, 1);
+  populateSelect();
+  renderAdminList();
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+populateSelect();
+</script>
+</body>
+</html>
