@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KJ Creations – Client Gallery</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --deep:#514343;--cream:#faf6f5;--sage:#b9c7bc;--deep2:#3a2e2e;--sage-light:#d6e0d8;--sage-dark:#8aa090; }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--cream);color:var(--deep);font-family:'Jost',sans-serif;font-weight:300;min-height:100vh}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+  header{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:28px 48px;border-bottom:1px solid rgba(81,67,67,0.12);background:rgba(250,246,245,0.9);backdrop-filter:blur(8px)}
+  .logo{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;letter-spacing:0.12em;color:var(--deep)}
+  .logo span{color:var(--sage-dark);font-style:italic}
+  .header-tagline{font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--sage-dark)}
+  main{position:relative;z-index:1;padding:0 48px 80px}
+  #login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 90px)}
+  .login-card{background:white;border:1px solid rgba(81,67,67,0.1);border-radius:2px;padding:56px 52px 48px;width:100%;max-width:420px;box-shadow:0 8px 40px rgba(81,67,67,0.08);text-align:center}
+  .login-card .lock-icon{width:48px;height:48px;margin:0 auto 28px;border:1.5px solid var(--sage);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--sage-dark);font-size:1.1rem}
+  .login-card h2{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--deep);margin-bottom:6px}
+  .login-card p{font-size:0.78rem;color:var(--sage-dark);letter-spacing:0.08em;margin-bottom:36px}
+  .client-select-wrap{position:relative;margin-bottom:16px}
+  .client-select-wrap label{display:block;text-align:left;font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--sage-dark);margin-bottom:8px}
+  select,input[type="password"],input[type="text"]{width:100%;padding:13px 16px;border:1px solid rgba(81,67,67,0.2);border-radius:1px;background:var(--cream);color:var(--deep);font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:300;outline:none;transition:border-color 0.2s;appearance:none}
+  select:focus,input:focus{border-color:var(--sage-dark)}
+  .select-arrow{position:absolute;right:14px;bottom:15px;pointer-events:none;color:var(--sage-dark);font-size:0.65rem}
+  .pw-wrap{position:relative;margin-bottom:28px}
+  .pw-wrap label{display:block;text-align:left;font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--sage-dark);margin-bottom:8px}
+  .pw-toggle{position:absolute;right:14px;top:38px;background:none;border:none;cursor:pointer;color:var(--sage-dark);font-size:0.75rem;font-family:'Jost',sans-serif}
+  .login-btn{width:100%;padding:14px;background:var(--deep);color:var(--cream);border:none;border-radius:1px;font-family:'Jost',sans-serif;font-size:0.75rem;font-weight:400;letter-spacing:0.22em;text-transform:uppercase;cursor:pointer;transition:background 0.25s,transform 0.15s}
+  .login-btn:hover{background:var(--deep2);transform:translateY(-1px)}
+  .error-msg{margin-top:14px;font-size:0.75rem;color:#b05050;letter-spacing:0.05em;display:none}
+  .error-msg.show{display:block}
+  #gallery-screen{display:none}
+  .gallery-header{display:flex;align-items:flex-end;justify-content:space-between;padding:52px 0 32px;border-bottom:1px solid rgba(81,67,67,0.1);margin-bottom:48px}
+  .gallery-title-block h1{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--deep);line-height:1}
+  .gallery-title-block h1 em{font-style:italic;color:var(--sage-dark)}
+  .gallery-title-block .occasion-tag{display:inline-block;margin-top:10px;background:var(--sage-light);color:var(--deep2);font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;padding:5px 14px;border-radius:20px}
+  .gallery-meta{text-align:right;font-size:0.75rem;color:var(--sage-dark);letter-spacing:0.05em;line-height:1.8}
+  .logout-btn{display:inline-block;margin-top:10px;background:none;border:1px solid rgba(81,67,67,0.2);border-radius:1px;padding:7px 18px;font-family:'Jost',sans-serif;font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--deep);cursor:pointer;transition:all 0.2s}
+  .logout-btn:hover{background:var(--deep);color:var(--cream)}
+  .photo-grid{columns:3;column-gap:16px}
+  @media(max-width:900px){.photo-grid{columns:2}}
+  @media(max-width:560px){.photo-grid{columns:1}}
+  .photo-item{break-inside:avoid;margin-bottom:16px;position:relative;overflow:hidden;border-radius:1px;cursor:pointer;background:var(--sage-light)}
+  .photo-item img{width:100%;display:block;transition:transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94),filter 0.4s;filter:brightness(0.97)}
+  .photo-item:hover img{transform:scale(1.04);filter:brightness(1.02)}
+  .photo-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(81,67,67,0.55) 0%,transparent 55%);opacity:0;transition:opacity 0.35s;display:flex;align-items:flex-end;padding:18px}
+  .photo-item:hover .photo-overlay{opacity:1}
+  .photo-overlay span{color:white;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase}
+  .photo-placeholder{width:100%;aspect-ratio:1;background:linear-gradient(135deg,var(--sage-light) 0%,var(--cream) 100%);display:flex;align-items:center;justify-content:center;color:var(--sage-dark);font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase}
+  #lightbox{display:none;position:fixed;inset:0;z-index:1000;background:rgba(58,46,46,0.92);backdrop-filter:blur(6px);align-items:center;justify-content:center}
+  #lightbox.open{display:flex}
+  .lightbox-inner{position:relative;max-width:90vw;max-height:88vh;display:flex;flex-direction:column;align-items:center}
+  .lightbox-inner img{max-width:100%;max-height:80vh;border-radius:1px;box-shadow:0 20px 80px rgba(0,0,0,0.4)}
+  .lightbox-caption{color:rgba(250,246,245,0.7);font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;margin-top:16px}
+  .lb-close{position:fixed;top:28px;right:36px;background:none;border:1px solid rgba(250,246,245,0.3);border-radius:50%;width:42px;height:42px;color:var(--cream);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+  .lb-close:hover{background:rgba(250,246,245,0.15)}
+  .lb-nav{position:fixed;top:50%;transform:translateY(-50%);background:none;border:1px solid rgba(250,246,245,0.25);border-radius:1px;color:var(--cream);font-size:1rem;width:44px;height:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+  .lb-nav:hover{background:rgba(250,246,245,0.12)}
+  .lb-prev{left:24px}.lb-next{right:24px}
+  .instructions{margin-top:60px;border-top:1px solid rgba(81,67,67,0.1);padding-top:40px}
+  .instructions h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300;margin-bottom:20px;color:var(--deep)}
+  .instructions-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+  .instr-card{background:white;border:1px solid rgba(81,67,67,0.08);padding:24px;border-radius:1px}
+  .instr-card .step-num{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--sage);line-height:1;margin-bottom:10px}
+  .instr-card h4{font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--deep);margin-bottom:8px}
+  .instr-card p{font-size:0.82rem;color:#7a6a6a;line-height:1.7}
+  code{background:var(--sage-light);padding:1px 6px;border-radius:2px;font-size:0.78rem;color:var(--deep2)}
+  footer{position:relative;z-index:1;text-align:center;padding:32px;border-top:1px solid rgba(81,67,67,0.08);font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--sage-dark)}
+
+  /* ── ADMIN TOGGLE BUTTON ── */
+  .admin-toggle{background:none;border:none;cursor:pointer;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--sage-dark);font-family:'Jost',sans-serif;padding:4px 0;margin-top:20px;text-decoration:underline;text-underline-offset:3px}
+
+  /* ── ADMIN PASSWORD MODAL ── */
+  #admin-modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(58,46,46,0.85);backdrop-filter:blur(6px);align-items:center;justify-content:center}
+  #admin-modal.open{display:flex}
+  .admin-modal-card{background:white;border:1px solid rgba(81,67,67,0.1);border-radius:2px;padding:48px 44px 40px;width:100%;max-width:380px;box-shadow:0 12px 48px rgba(81,67,67,0.15);text-align:center}
+  .admin-modal-card .shield-icon{width:48px;height:48px;margin:0 auto 24px;border:1.5px solid var(--sage);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--sage-dark);font-size:1.2rem}
+  .admin-modal-card h3{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:var(--deep);margin-bottom:6px}
+  .admin-modal-card p{font-size:0.75rem;color:var(--sage-dark);letter-spacing:0.08em;margin-bottom:28px}
+  .admin-pw-wrap{position:relative;margin-bottom:20px;text-align:left}
+  .admin-pw-wrap label{display:block;font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--sage-dark);margin-bottom:8px}
+  .admin-pw-wrap input{width:100%}
+  .admin-pw-toggle{position:absolute;right:14px;top:38px;background:none;border:none;cursor:pointer;color:var(--sage-dark);font-size:0.75rem;font-family:'Jost',sans-serif}
+  .admin-modal-btns{display:flex;gap:10px}
+  .admin-enter-btn{flex:1;padding:13px;background:var(--deep);color:var(--cream);border:none;border-radius:1px;font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:400;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:background 0.2s}
+  .admin-enter-btn:hover{background:var(--deep2)}
+  .admin-cancel-btn{padding:13px 18px;background:none;border:1px solid rgba(81,67,67,0.2);border-radius:1px;font-family:'Jost',sans-serif;font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--deep);cursor:pointer;transition:all 0.2s}
+  .admin-cancel-btn:hover{background:var(--sage-light)}
+  .admin-error{margin-top:12px;font-size:0.73rem;color:#b05050;display:none}
+  .admin-error.show{display:block}
+
+  /* ── ADMIN PANEL ── */
+  #admin-panel{display:none;margin-top:48px;background:white;border:1px solid rgba(185,199,188,0.4);border-radius:2px;padding:36px}
+  .admin-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+  #admin-panel h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--deep)}
+  .admin-lock-btn{background:none;border:1px solid rgba(81,67,67,0.15);border-radius:1px;padding:6px 14px;font-family:'Jost',sans-serif;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--sage-dark);cursor:pointer;transition:all 0.2s}
+  .admin-lock-btn:hover{background:var(--deep);color:var(--cream);border-color:var(--deep)}
+  .client-list{list-style:none}
+  .client-list li{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(81,67,67,0.07);font-size:0.85rem}
+  .client-list li:last-child{border-bottom:none}
+  .client-info strong{display:block;font-weight:400;color:var(--deep)}
+  .client-info span{font-size:0.72rem;color:var(--sage-dark);letter-spacing:0.05em}
+  .add-client-form{margin-top:28px;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end}
+  .add-client-form label{display:block;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--sage-dark);margin-bottom:7px}
+  .add-client-form input,.add-client-form select{width:100%;padding:11px 14px;border:1px solid rgba(81,67,67,0.2);border-radius:1px;background:var(--cream);color:var(--deep);font-family:'Jost',sans-serif;font-size:0.82rem;outline:none}
+  .add-btn{padding:11px 22px;background:var(--sage);color:var(--deep2);border:none;border-radius:1px;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;transition:background 0.2s;white-space:nowrap}
+  .add-btn:hover{background:var(--sage-dark);color:white}
+  .del-btn{background:none;border:1px solid rgba(81,67,67,0.15);padding:5px 12px;border-radius:1px;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:#9a7070;transition:all 0.2s}
+  .del-btn:hover{background:#f5eaea;border-color:#c08080;color:#a05050}
+  @media(max-width:700px){header{padding:20px 24px}main{padding:0 24px 60px}.add-client-form{grid-template-columns:1fr 1fr}.add-client-form .add-btn-wrap{grid-column:span 2}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">KJ <span>Creations</span></div>
+  <div class="header-tagline">Private Client Gallery</div>
+</header>
+
+<main>
+  <!-- LOGIN -->
+  <div id="login-screen">
+    <div class="login-card">
+      <div class="lock-icon">&#x1F512;</div>
+      <h2>Your Gallery Awaits</h2>
+      <p>Select your name and enter your private access code</p>
+      <div class="client-select-wrap">
+        <label for="client-select">Your Name</label>
+        <select id="client-select"></select>
+        <span class="select-arrow">&#9660;</span>
+      </div>
+      <div class="pw-wrap">
+        <label for="pw-input">Access Code</label>
+        <input type="password" id="pw-input" placeholder="Enter your code" />
+        <button class="pw-toggle" onclick="togglePw()" type="button">show</button>
+      </div>
+      <button class="login-btn" onclick="attemptLogin()">View My Gallery</button>
+      <div class="error-msg" id="error-msg">Incorrect access code. Please try again.</div>
+      <button class="admin-toggle" onclick="openAdminModal()">Studio Admin ›</button>
+    </div>
+  </div>
+
+  <!-- GALLERY -->
+  <div id="gallery-screen">
+    <div class="gallery-header">
+      <div class="gallery-title-block">
+        <h1>Welcome, <em id="gallery-client-name"></em></h1>
+        <span class="occasion-tag" id="gallery-occasion"></span>
+      </div>
+      <div class="gallery-meta">
+        <div id="gallery-photo-count"></div>
+        <div>KJ Creations Studio</div>
+        <button class="logout-btn" onclick="logout()">← Back</button>
+      </div>
+    </div>
+    <div class="photo-grid" id="photo-grid"></div>
+    <div class="instructions">
+      <h3>How to use your gallery</h3>
+      <div class="instructions-grid">
+        <div class="instr-card"><div class="step-num">01</div><h4>Browse</h4><p>Scroll through your photos. Click any image to open the full-size lightbox viewer.</p></div>
+        <div class="instr-card"><div class="step-num">02</div><h4>Navigate</h4><p>Use the arrow buttons in the lightbox or your keyboard ← → keys to move between photos.</p></div>
+        <div class="instr-card"><div class="step-num">03</div><h4>Download</h4><p>Right-click any photo in the lightbox and select <em>Save image as</em> to download it.</p></div>
+        <div class="instr-card"><div class="step-num">04</div><h4>Share</h4><p>Keep your access code private. Share only with people you'd like to see your gallery.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL (only visible after correct admin password) -->
+  <div id="admin-panel">
+    <div class="admin-panel-header">
+      <h3>Studio Admin — Manage Clients</h3>
+      <button class="admin-lock-btn" onclick="lockAdmin()">🔒 Lock Admin</button>
+    </div>
+    <p style="font-size:0.78rem;color:var(--sage-dark);margin-bottom:24px;">View current clients and add new ones below.</p>
+    <ul class="client-list" id="client-list"></ul>
+    <div class="add-client-form">
+      <div><label>Client Name</label><input type="text" id="new-name" placeholder="e.g. Sarah M." /></div>
+      <div><label>Access Code</label><input type="text" id="new-pw" placeholder="e.g. roses2024" /></div>
+      <div>
+        <label>Occasion</label>
+        <select id="new-occasion">
+          <option>Wedding</option><option>Portrait Session</option><option>Maternity</option>
+          <option>Newborn</option><option>Family</option><option>Birthday</option>
+          <option>Graduation</option><option>Engagement</option><option>Branding</option>
+          <option>Event</option><option>Other</option>
+        </select>
+      </div>
+      <div class="add-btn-wrap"><button class="add-btn" onclick="addClient()">+ Add Client</button></div>
+    </div>
+  </div>
+</main>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button class="lb-close" onclick="closeLightbox()">&#x2715;</button>
+  <button class="lb-nav lb-prev" onclick="lbNav(-1)">&#8592;</button>
+  <div class="lightbox-inner">
+    <img id="lb-img" src="" alt="" />
+    <div class="lightbox-caption" id="lb-caption"></div>
+  </div>
+  <button class="lb-nav lb-next" onclick="lbNav(1)">&#8594;</button>
+</div>
+
+<!-- ADMIN PASSWORD MODAL -->
+<div id="admin-modal">
+  <div class="admin-modal-card">
+    <div class="shield-icon">&#x1F6E1;</div>
+    <h3>Studio Access</h3>
+    <p>Enter your studio admin password to continue</p>
+    <div class="admin-pw-wrap">
+      <label for="admin-pw-input">Admin Password</label>
+      <input type="password" id="admin-pw-input" placeholder="Enter admin password" />
+      <button class="admin-pw-toggle" onclick="toggleAdminPw()" type="button">show</button>
+    </div>
+    <div class="admin-modal-btns">
+      <button class="admin-cancel-btn" onclick="closeAdminModal()">Cancel</button>
+      <button class="admin-enter-btn" onclick="attemptAdminLogin()">Enter Studio</button>
+    </div>
+    <div class="admin-error" id="admin-error">Incorrect password. Access denied.</div>
+  </div>
+</div>
+
+<footer>KJ Creations &nbsp;·&nbsp; Private Client Gallery &nbsp;·&nbsp; All images are protected</footer>
+
+<script>
+// ═══════════════════════════════════════════════
+// ADMIN PASSWORD — change this to update your password
+// ═══════════════════════════════════════════════
+const ADMIN_PASSWORD = "KJstudio2024";
+
+// ═══════════════════════════════════════════════
+// CLIENT DATA
+// To add a new client copy the commented block at
+// the bottom and fill in name, password, occasion,
+// and photos. Use lh3.googleusercontent.com/d/ID format.
+// ═══════════════════════════════════════════════
+let clients = [
+  {
+    name: "Talor & Sydnee",
+    password: "Love919",
+    occasion: "Engagement",
+    photos: [
+      { url: "https://lh3.googleusercontent.com/d/10vBpyzz3nmiUNhoOYQ88OEOfRTNw6W-t", caption: "Photo 1" },
+      { url: "https://lh3.googleusercontent.com/d/1YQTbbqdarITp2ngRx-ro1gZ_C0oEvhiF", caption: "Photo 2" },
+      { url: "https://lh3.googleusercontent.com/d/119COs7ERLKiu67Z3yPFLjJG6C5Gz_kqC", caption: "Photo 3" },
+      { url: "https://lh3.googleusercontent.com/d/1cYhjVWEIJR7TRZVO8Cf3xIszKqhvJgL2", caption: "Photo 4" },
+      { url: "https://lh3.googleusercontent.com/d/18zPQ8MHaw5tFBud2QTMQ4xywy13I3K6O", caption: "Photo 5" },
+      { url: "https://lh3.googleusercontent.com/d/1AeXqdAcQnNwxjUHt7U0Vk8UFYYcb7Za0", caption: "Photo 6" },
+      { url: "https://lh3.googleusercontent.com/d/13Bi9i-XrPYZVLVs9Fch_3XP3nhd0xkku", caption: "Photo 7" },
+      { url: "https://lh3.googleusercontent.com/d/1K41rwXiXcBmz9tpQiDPDkqGCuA3fpHH5", caption: "Photo 8" },
+      { url: "https://lh3.googleusercontent.com/d/1ZySzvrtjolzFeo3FV2xJpLCObO7GSwZY", caption: "Photo 9" },
+      { url: "https://lh3.googleusercontent.com/d/1I8hQd5Ezbenm5BdfSg9n7fC-r6WScncw", caption: "Photo 10" },
+      { url: "https://lh3.googleusercontent.com/d/1ZzCqEM8pEHXtDNahzla8Byrom8s08qTb", caption: "Photo 11" },
+      { url: "https://lh3.googleusercontent.com/d/1jWrNJ_68WuycLYwnGIMb6ZDnmlyMceVr", caption: "Photo 12" },
+      { url: "https://lh3.googleusercontent.com/d/1B0b6es75EmDvZjYih1ajH8n-ZYNIlsBB", caption: "Photo 13" },
+      { url: "https://lh3.googleusercontent.com/d/1-p0tBNkQuuev1AiVInKNxe_KXnmxJ9Mw", caption: "Photo 14" },
+      { url: "https://lh3.googleusercontent.com/d/1-9aKMkGaT9_J0aeVyJgVFvDWJNcuGyi-", caption: "Photo 15" },
+      { url: "https://lh3.googleusercontent.com/d/1TO3_mJ6V2evYQBELOb31AKlpcBJ5mY9Q", caption: "Photo 16" },
+      { url: "https://lh3.googleusercontent.com/d/14AoNOXB-jjlrMSnPC9BBjSuOI1nDBcSu", caption: "Photo 17" },
+      { url: "https://lh3.googleusercontent.com/d/1KapN_guU3J8Gw4fc7W9Fe6u2Sg1X2tN7", caption: "Photo 18" },
+      { url: "https://lh3.googleusercontent.com/d/1gvDWlBA6vw8nKLlnUJPKMjFrDY2kkFQn", caption: "Photo 19" },
+      { url: "https://lh3.googleusercontent.com/d/1awgYRlQk7Rsow45JlbL-Ve0EPAjCsxNI", caption: "Photo 20" },
+      { url: "https://lh3.googleusercontent.com/d/1N5vUswfnYZSfgP3MwpljH4P3ZOv45x7p", caption: "Photo 21" },
+      { url: "https://lh3.googleusercontent.com/d/1tCU6m6DYwlZuwnnuCkGcWxM6W6dA9SRi", caption: "Photo 22" },
+      { url: "https://lh3.googleusercontent.com/d/1O5Y82ovj-0o776KE6vqGfxw7DzD473pb", caption: "Photo 23" },
+      { url: "https://lh3.googleusercontent.com/d/1QBnX9BnkOM46MnPD7q8_1AZ6xMNXDCFv", caption: "Photo 24" },
+      { url: "https://lh3.googleusercontent.com/d/1x7KQPy6PSJXPJTgu37TwpZvvbwIexHD1", caption: "Photo 25" },
+      { url: "https://lh3.googleusercontent.com/d/1eS4AeFtcDZygy5CvfBGXbDMoMh5e3PRJ", caption: "Photo 26" },
+      { url: "https://lh3.googleusercontent.com/d/1VVworoxyuQudDcsZLJUk-0_JKNKkOTmM", caption: "Photo 27" },
+      { url: "https://lh3.googleusercontent.com/d/1BU5JOX0DWhBRKgXZwe-8uGBwUgYNyIwb", caption: "Photo 28" },
+      { url: "https://lh3.googleusercontent.com/d/1QTIRndkyn0axve6w0RCb_-QIvrm1tjrX", caption: "Photo 29" },
+      { url: "https://lh3.googleusercontent.com/d/1Y5_pFUPj9oMm3EOwDP1UNPVYo6tYF3Bv", caption: "Photo 30" },
+      { url: "https://lh3.googleusercontent.com/d/1wgRW_dSfstREEbi1_lFnCIqAAx5-lBqV", caption: "Photo 31" },
+      { url: "https://lh3.googleusercontent.com/d/1k8kv2ZO-bEGyqCWM9lBGTOGYxvgAj5jH", caption: "Photo 32" },
+      { url: "https://lh3.googleusercontent.com/d/19UkD43du805ghMc-Dqa7M63es0mVtud2", caption: "Photo 33" },
+      { url: "https://lh3.googleusercontent.com/d/1Vq5SsDQ1nVS5OVd3fD7dzMx3ZCS9CwuK", caption: "Photo 34" },
+      { url: "https://lh3.googleusercontent.com/d/1chMwh75_DAo1m0_OtjW9ofiytXaGUoq5", caption: "Photo 35" },
+      { url: "https://lh3.googleusercontent.com/d/1MtyDZI7UM_mP8DHVgyGnbCnRiWU4AMZT", caption: "Photo 36" },
+      { url: "https://lh3.googleusercontent.com/d/15v48naJW282zfYF50kuWvy8NcLj3vc4c", caption: "Photo 37" },
+      { url: "https://lh3.googleusercontent.com/d/1x2fbfVnxQlTkYq-0UuEiPbi7jj4WEt8p", caption: "Photo 38" },
+      { url: "https://lh3.googleusercontent.com/d/1Q8zsQrAMShOfRy9PRdoB9T7b58K-WXL5", caption: "Photo 39" },
+      { url: "https://lh3.googleusercontent.com/d/1UyYqPblRtxz-vUbtZbceWPdtXr70OYUn", caption: "Photo 40" },
+      { url: "https://lh3.googleusercontent.com/d/15EaL9Q8wUCaTvRyDNKUn8GpYBg047601", caption: "Photo 41" },
+      { url: "https://lh3.googleusercontent.com/d/1c2D00h1hBTUp1tYy23XsVBE8kKRdGhDC", caption: "Photo 42" },
+      { url: "https://lh3.googleusercontent.com/d/1UOdKoq6n_2K25NEuMJl4115fMxmJ7_LW", caption: "Photo 43" },
+      { url: "https://lh3.googleusercontent.com/d/14sIVdEIaI-MoRgGROGOq8B1bxmi2uAV8", caption: "Photo 44" },
+      { url: "https://lh3.googleusercontent.com/d/14Fupme80hEmBFTfJx6RBFz2hI56a4wJa", caption: "Photo 45" },
+      { url: "https://lh3.googleusercontent.com/d/1XTB09Q1giMJVd5ZkrYIF1qLx9LgehC-d", caption: "Photo 46" },
+      { url: "https://lh3.googleusercontent.com/d/12fPu6y5Jvm9jOq9diZaz5OwVaery54ip", caption: "Photo 47" },
+      { url: "https://lh3.googleusercontent.com/d/1QRn4iCIH9jt2LnQjWwczYhRYQGXdT8xY", caption: "Photo 48" },
+      { url: "https://lh3.googleusercontent.com/d/1FMx8p9idPa3hJ07Orua0f7yHv1PbKIm_", caption: "Photo 49" },
+      { url: "https://lh3.googleusercontent.com/d/1xHjeoTHUcNiDw0OIcDYGtKjY17Uw8Ezy", caption: "Photo 50" },
+      { url: "https://lh3.googleusercontent.com/d/1zoZxxG8kyxoYncY2ARjEFCkQtz5cwkke", caption: "Photo 51" },
+      { url: "https://lh3.googleusercontent.com/d/19TnFRE90pMuDpeUd7iBP1aaqjQDPUYp9", caption: "Photo 52" },
+      { url: "https://lh3.googleusercontent.com/d/1Ri5_S51mzVcuzQ_ll54aXq2QKspGvkRB", caption: "Photo 53" },
+      { url: "https://lh3.googleusercontent.com/d/1Oopcmrknf7VCZIj3Qh07zeaw3oB8VsBp", caption: "Photo 54" },
+      { url: "https://lh3.googleusercontent.com/d/1Wi6_VMNNwMP1dXz2QfvvWDgqIhZHm-S3", caption: "Photo 55" },
+      { url: "https://lh3.googleusercontent.com/d/1VsrOyjU5osWjOoThaeyjf4w5paiBKmsO", caption: "Photo 56" },
+      { url: "https://lh3.googleusercontent.com/d/1xWxXJS9HYDhE1QVsKcv9ftyCRGl-Pn7m", caption: "Photo 57" },
+      { url: "https://lh3.googleusercontent.com/d/1wkqoqS2dzdGewJKGvc5NaDCTeDieoZOL", caption: "Photo 58" },
+      { url: "https://lh3.googleusercontent.com/d/1eAyoyQrYzEz69L6f6xZNRPH7seY6Uvok", caption: "Photo 59" },
+      { url: "https://lh3.googleusercontent.com/d/1cgOgr196IbLWJe3SoM5quo2rM-MI8cGF", caption: "Photo 60" },
+      { url: "https://lh3.googleusercontent.com/d/1RWX-LXWhEcuSDNOWpAurwUzozq78BTOI", caption: "Photo 61" },
+      { url: "https://lh3.googleusercontent.com/d/13y15Wufzo8mcYyvdOj-9riil2aHYQIp_", caption: "Photo 62" },
+      { url: "https://lh3.googleusercontent.com/d/1YjEKpm1InaTB99r1xEWHHYZURZn29PRB", caption: "Photo 63" },
+      { url: "https://lh3.googleusercontent.com/d/1RhPy6rrJUGt4uMvDESNm025sFdkXY8UN", caption: "Photo 64" },
+      { url: "https://lh3.googleusercontent.com/d/1QtqL_gIDfiyK_c5FU_iR4z4rzun7T6KM", caption: "Photo 65" },
+      { url: "https://lh3.googleusercontent.com/d/1a0ZdtU4tEyWRF8ASte_KGQEC_VEoQIbO", caption: "Photo 66" },
+      { url: "https://lh3.googleusercontent.com/d/1ihNaE3nEflp5V4byqIaQwJ6HglHHdEX7", caption: "Photo 67" },
+      { url: "https://lh3.googleusercontent.com/d/1HOe2TvD33rWXsR8qkRY0Assn_DfRX-JE", caption: "Photo 68" },
+      { url: "https://lh3.googleusercontent.com/d/16o-44hZBZpfBh95k5l7YJG2dXGg8tn7u", caption: "Photo 69" },
+      { url: "https://lh3.googleusercontent.com/d/1izW14LgCTGY4qDaI1Ls_fM04J1n2TgtO", caption: "Photo 70" },
+      { url: "https://lh3.googleusercontent.com/d/15a1lGtV6_Wh448syi9lyAOqiUAEhF3ZQ", caption: "Photo 71" },
+      { url: "https://lh3.googleusercontent.com/d/1q5PqQbSYcGPV7xg8vkT3pI7oDrpbuU6m", caption: "Photo 72" },
+      { url: "https://lh3.googleusercontent.com/d/1pWV08ePASHSnnIZLA5ikYL9ZzxS28QXI", caption: "Photo 73" },
+      { url: "https://lh3.googleusercontent.com/d/1vYUSwOVo6sEH0D_tUsChBuQoe0W5rkIL", caption: "Photo 74" },
+      { url: "https://lh3.googleusercontent.com/d/19vx4cmw8KTLQ2kxcP_ziZ5pBwMxZ043C", caption: "Photo 75" },
+      { url: "https://lh3.googleusercontent.com/d/1nTYoBedviaXvQYlys6AyjfidFlVeZMgq", caption: "Photo 76" },
+      { url: "https://lh3.googleusercontent.com/d/1OvTV6qQ-8-HDTAB7vKwQ7LDsnmkG8tgN", caption: "Photo 77" },
+      { url: "https://lh3.googleusercontent.com/d/12LXlI9Kda9P7CWAZygAXNRLwVu4bbrGB", caption: "Photo 78" },
+      { url: "https://lh3.googleusercontent.com/d/19Tqoy6CJdROZo_CA0UHzBJQhfXLH3m7x", caption: "Photo 79" },
+      { url: "https://lh3.googleusercontent.com/d/1B_VUYGPe6WPCfcMXoo36Dtk_w3hHUACL", caption: "Photo 80" },
+      { url: "https://lh3.googleusercontent.com/d/1Se824Jq-kymZuKV4X2KZ-HgTsBB-ScHf", caption: "Photo 81" },
+      { url: "https://lh3.googleusercontent.com/d/1dFBQTPrkvdwcDnlhYRqAicsuqQOO28ec", caption: "Photo 82" },
+      { url: "https://lh3.googleusercontent.com/d/1iNER6FfrFT1JOjAIZf88PkqKdCR1aPeo", caption: "Photo 83" },
+      { url: "https://lh3.googleusercontent.com/d/1pvDv8AiXGzgZXQmDTCLVxhRwyTqiaszm", caption: "Photo 84" },
+      { url: "https://lh3.googleusercontent.com/d/1tNzBSb76CvGKR1SdRVqIcPd1JN8qoRZ9", caption: "Photo 85" },
+      { url: "https://lh3.googleusercontent.com/d/1rv8qFYOaPGnnQJ4DLFFg5jpABHyMw05C", caption: "Photo 86" },
+      { url: "https://lh3.googleusercontent.com/d/1N6HOVV3MitjgmrAkwX10pytN-s9YYl-D", caption: "Photo 87" },
+      { url: "https://lh3.googleusercontent.com/d/1H-BHFhAz0QnfnRG8kc0S45kffxZYx7iR", caption: "Photo 88" },
+      { url: "https://lh3.googleusercontent.com/d/1t4kZjbWyRZmOJ4ugkqVO7VBXEAQajEJ1", caption: "Photo 89" },
+      { url: "https://lh3.googleusercontent.com/d/16s114u_GZZxQOce6XM0nB-4kP-x1fb1r", caption: "Photo 90" },
+      { url: "https://lh3.googleusercontent.com/d/197ImtkDyy-2sc6U1VX2GD90p5d6FZC8Y", caption: "Photo 91" }
+    ]
+  }
+  // ,{
+  //   name: "Client Name",
+  //   password: "theirpassword",
+  //   occasion: "Wedding",
+  //   photos: [
+  //     { url: "https://lh3.googleusercontent.com/d/YOURID", caption: "Photo 1" }
+  //   ]
+  // }
+];
+
+// ── CLIENT LOGIN ──
+function populateSelect(){const sel=document.getElementById('client-select');sel.innerHTML='<option value="">— Select your name —</option>';clients.forEach((c,i)=>{if(!c.name)return;const opt=document.createElement('option');opt.value=i;opt.textContent=c.name;sel.appendChild(opt)})}
+function attemptLogin(){const idx=parseInt(document.getElementById('client-select').value);const pw=document.getElementById('pw-input').value.trim();if(isNaN(idx)){showError('Please select your name.');return}if(clients[idx].password===pw){document.getElementById('error-msg').classList.remove('show');showGallery(idx)}else{showError('Incorrect access code. Please try again.');document.getElementById('pw-input').value=''}}
+function showError(msg){const err=document.getElementById('error-msg');err.textContent=msg;err.classList.add('show')}
+function togglePw(){const inp=document.getElementById('pw-input');const btn=document.querySelector('.pw-toggle');if(inp.type==='password'){inp.type='text';btn.textContent='hide'}else{inp.type='password';btn.textContent='show'}}
+
+// ── GALLERY ──
+let currentClient=null,lbIndex=0;
+function showGallery(idx){currentClient=clients[idx];document.getElementById('login-screen').style.display='none';document.getElementById('gallery-screen').style.display='block';document.getElementById('gallery-client-name').textContent=currentClient.name;document.getElementById('gallery-occasion').textContent=currentClient.occasion;document.getElementById('gallery-photo-count').textContent=currentClient.photos.length+' Photos';renderGrid()}
+function renderGrid(){const grid=document.getElementById('photo-grid');grid.innerHTML='';currentClient.photos.forEach((photo,i)=>{const item=document.createElement('div');item.className='photo-item';item.onclick=()=>openLightbox(i);if(photo.url){item.innerHTML=`<img src="${photo.url}" alt="${photo.caption}" loading="lazy" /><div class="photo-overlay"><span>View</span></div>`}else{item.innerHTML=`<div class="photo-placeholder">Photo ${i+1}</div><div class="photo-overlay"><span>View</span></div>`}grid.appendChild(item)})}
+function logout(){currentClient=null;document.getElementById('gallery-screen').style.display='none';document.getElementById('login-screen').style.display='flex';document.getElementById('pw-input').value='';document.getElementById('error-msg').classList.remove('show')}
+
+// ── LIGHTBOX ──
+function openLightbox(i){lbIndex=i;updateLightbox();document.getElementById('lightbox').classList.add('open');document.body.style.overflow='hidden'}
+function updateLightbox(){const photo=currentClient.photos[lbIndex];const img=document.getElementById('lb-img');const cap=document.getElementById('lb-caption');if(photo.url){img.src=photo.url;img.style.display='block'}else{img.src='';img.style.display='none'}cap.textContent=photo.caption+' ('+(lbIndex+1)+' / '+currentClient.photos.length+')'}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open');document.body.style.overflow=''}
+function lbNav(dir){lbIndex=(lbIndex+dir+currentClient.photos.length)%currentClient.photos.length;updateLightbox()}
+document.getElementById('lightbox').addEventListener('click',function(e){if(e.target===this)closeLightbox()});
+document.addEventListener('keydown',function(e){if(!document.getElementById('lightbox').classList.contains('open'))return;if(e.key==='ArrowLeft')lbNav(-1);if(e.key==='ArrowRight')lbNav(1);if(e.key==='Escape')closeLightbox()});
+document.getElementById('pw-input').addEventListener('keydown',function(e){if(e.key==='Enter')attemptLogin()});
+
+// ── ADMIN MODAL ──
+function openAdminModal(){
+  document.getElementById('admin-pw-input').value='';
+  document.getElementById('admin-error').classList.remove('show');
+  document.getElementById('admin-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('admin-pw-input').focus(),100);
+}
+function closeAdminModal(){
+  document.getElementById('admin-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+function toggleAdminPw(){
+  const inp=document.getElementById('admin-pw-input');
+  const btn=document.querySelector('.admin-pw-toggle');
+  if(inp.type==='password'){inp.type='text';btn.textContent='hide'}
+  else{inp.type='password';btn.textContent='show'}
+}
+function attemptAdminLogin(){
+  const pw=document.getElementById('admin-pw-input').value.trim();
+  if(pw===ADMIN_PASSWORD){
+    closeAdminModal();
+    openAdminPanel();
+  } else {
+    document.getElementById('admin-error').classList.add('show');
+    document.getElementById('admin-pw-input').value='';
+    document.getElementById('admin-pw-input').focus();
+  }
+}
+document.getElementById('admin-pw-input').addEventListener('keydown',function(e){if(e.key==='Enter')attemptAdminLogin()});
+document.getElementById('admin-modal').addEventListener('click',function(e){if(e.target===this)closeAdminModal()});
+
+// ── ADMIN PANEL ──
+function openAdminPanel(){
+  const panel=document.getElementById('admin-panel');
+  panel.style.display='block';
+  renderAdminList();
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function lockAdmin(){
+  document.getElementById('admin-panel').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderAdminList(){const list=document.getElementById('client-list');list.innerHTML='';clients.forEach((c,i)=>{if(!c.name)return;const li=document.createElement('li');li.innerHTML=`<div class="client-info"><strong>${c.name}</strong><span>${c.occasion} &nbsp;·&nbsp; ${c.photos.length} photos &nbsp;·&nbsp; Code: <code>${c.password}</code></span></div><button class="del-btn" onclick="deleteClient(${i})">Remove</button>`;list.appendChild(li)});if(clients.filter(c=>c.name).length===0){list.innerHTML='<li style="color:var(--sage-dark);font-size:0.82rem;padding:14px 0;">No clients yet.</li>'}}
+function addClient(){const name=document.getElementById('new-name').value.trim();const pw=document.getElementById('new-pw').value.trim();const occasion=document.getElementById('new-occasion').value;if(!name||!pw){alert('Please enter a name and access code.');return}clients.push({name,password:pw,occasion,photos:[]});document.getElementById('new-name').value='';document.getElementById('new-pw').value='';populateSelect();renderAdminList()}
+function deleteClient(i){if(!confirm(`Remove ${clients[i].name}?`))return;clients.splice(i,1);populateSelect();renderAdminList()}
+
+populateSelect();
+</script>
+</body>
+</html>
